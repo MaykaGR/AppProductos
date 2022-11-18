@@ -35,7 +35,7 @@ class GestorBDD private constructor() {
         println("[Desconexión de la base de datos]")
     }
 
-    fun mostrarTodo() {
+    fun selectAll() {
         if (con != null) {
             val st = con!!.createStatement()
             val rs = st.executeQuery("select * from productos;")
@@ -48,7 +48,7 @@ class GestorBDD private constructor() {
         }
     }
 
-    fun mostrarAlgo(name: String) {
+    fun select(name: String) {
         if (con != null) {
             val st = con!!.createStatement()
             val rs = st.executeQuery("select * from productos where nombre = '$name'")
@@ -77,7 +77,7 @@ class GestorBDD private constructor() {
     fun insert(id: Int,nombre:String,precio: Int){
         if (con!= null){
             val st = con!!.createStatement()
-            st.executeUpdate("insert into productos values ($id,'$nombre',$precio)")
+            val rs = st.executeUpdate("insert into productos values ($id,'$nombre',$precio)")
         }
     }
 }
