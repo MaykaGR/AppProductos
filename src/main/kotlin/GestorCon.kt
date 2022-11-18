@@ -42,8 +42,9 @@ class GestorBDD private constructor() {
             val rsmtd = rs.metaData
             while (rs.next()) {
                 for (i in 1..rsmtd.columnCount) {
-                    println(rs.getString(i))
+                    print(rsmtd.getColumnName(i)+": "+rs.getString(i)+" | ")
                 }
+                println("")
             }
         }
     }
