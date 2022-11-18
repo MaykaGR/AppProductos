@@ -77,7 +77,7 @@ class GestorBDD private constructor() {
     fun insert(id: Int,nombre:String,precio: Int){
         if (con!= null){
             val st = con!!.createStatement()
-            val rs = st.executeUpdate("insert into productos values ('$id','$nombre','$precio')")
+            st.executeUpdate("insert into productos values ($id,'$nombre',$precio)")
         }
     }
 }

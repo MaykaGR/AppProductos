@@ -1,7 +1,7 @@
-fun main(args: Array<String>) {
-    println("Hello!")
-
-    // Try adding program arguments via Run/Debug configuration.
-    // Learn more about running applications: https://www.jetbrains.com/help/idea/running-applications.html.
-    println("Program arguments: ${args.joinToString()}")
+fun main() {
+    val bdd = GestorBDD.getInstance()
+    bdd.conexion()
+    bdd.insert(1,"Pantalla",10)
+    bdd.mostrarAlgo("Pantalla")
+    bdd.desconexion()
 }
