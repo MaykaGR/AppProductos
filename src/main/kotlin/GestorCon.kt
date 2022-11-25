@@ -42,7 +42,7 @@ class GestorBDD private constructor() {
             val rsmtd = rs.metaData
             while (rs.next()) {
                 for (i in 1..rsmtd.columnCount) {
-                    print(rsmtd.getColumnName(i)+": "+rs.getString(i)+" | ")
+                    print(rsmtd.getColumnName(i) + ": " + rs.getString(i) + " | ")
                 }
                 println("")
             }
@@ -61,22 +61,23 @@ class GestorBDD private constructor() {
             }
         }
     }
-    fun update(id: Int, precio: Int){
-        if(con!= null){
+
+    fun update(id: Int, precio: Int) {
+        if (con != null) {
             val st = con!!.createStatement()
             val rs = st.executeUpdate("update productos set precio = $precio where id = $id")
         }
     }
 
-    fun delete(id:Int){
-        if (con!= null){
+    fun delete(id: Int) {
+        if (con != null) {
             val st = con!!.createStatement()
             val rs = st.executeUpdate("delete from productos where id = $id")
         }
     }
 
-    fun insert(id: Int,nombre:String,precio: Int){
-        if (con!= null){
+    fun insert(id: Int, nombre: String, precio: Int) {
+        if (con != null) {
             val st = con!!.createStatement()
             val rs = st.executeUpdate("insert into productos values ($id,'$nombre',$precio)")
         }
