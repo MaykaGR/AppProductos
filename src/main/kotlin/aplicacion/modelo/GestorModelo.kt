@@ -95,12 +95,12 @@ class GestorModelo {
             var listaProductos: MutableList<Producto> = mutableListOf()
 
             while(rs.next()){
-                rs.getString(1)
-                rs.getString(2)
-                rs.getInt(3)
-                rs.getInt(4)
-                rs.getString(5)
-                listaProductos.add(Producto(rs.getString(1),rs.getString(2), rs.getInt(3), rs.getInt(4), rs.getString(5)))
+                val id = rs.getString(1)
+                val nombre = rs.getString(2)
+                val precio = rs.getInt(3)
+                val cantidad = rs.getInt(4)
+                val descr = rs.getString(5)
+                listaProductos.add(Producto(id,nombre, precio, cantidad, descr))
             }
             ps.close()
             rs.close()

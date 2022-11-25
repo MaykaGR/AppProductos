@@ -24,8 +24,7 @@ class AppController(val vista: AppVista) {
     }
 
     fun onStart(): Int {
-        val opcion = vista.mainMenu()
-        return opcion
+        return vista.mainMenu()
     }
 
     fun onExit() {
