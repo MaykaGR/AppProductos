@@ -1,13 +1,16 @@
-import java.sql.Connection
-import java.sql.DriverManager
+package aplicacion.modelo
 
-class GestorBDD private constructor() {
+import aplicacion.modelo.clases.Producto
+import aplicacion.modelo.sentencias.sentenciasSQLapp
+import java.sql.*
+
+class GestorModelo {
     companion object {
-        private var instance: GestorBDD? = null
+        private var instance: GestorModelo? = null
 
-        fun getInstance(): GestorBDD {
+        fun getInstance(): GestorModelo {
             if (instance == null) {
-                instance = GestorBDD()
+                instance = GestorModelo()
             }
             return instance!!
         }
@@ -42,7 +45,7 @@ class GestorBDD private constructor() {
             val rsmtd = rs.metaData
             while (rs.next()) {
                 for (i in 1..rsmtd.columnCount) {
-                    print(rsmtd.getColumnName(i) + ": " + rs.getString(i) + " | ")
+                    print(rsmtd.getColumnName(i)+": "+rs.getString(i)+" | ")
                 }
                 println("")
             }
@@ -61,25 +64,53 @@ class GestorBDD private constructor() {
             }
         }
     }
-
-    fun update(id: Int, precio: Int) {
-        if (con != null) {
+    fun update(id: Int, precio: Int){
+        if(con!= null){
             val st = con!!.createStatement()
             val rs = st.executeUpdate("update productos set precio = $precio where id = $id")
         }
     }
 
-    fun delete(id: Int) {
-        if (con != null) {
+    fun delete(id:Int){
+        if (con!= null){
             val st = con!!.createStatement()
             val rs = st.executeUpdate("delete from productos where id = $id")
         }
     }
 
-    fun insert(id: Int, nombre: String, precio: Int) {
-        if (con != null) {
+    fun insert(id: Int,nombre:String,precio: Int){
+        if (con!= null){
             val st = con!!.createStatement()
             val rs = st.executeUpdate("insert into productos values ($id,'$nombre',$precio)")
         }
     }
+    /*
+    * Función que muestra los productos en stock
+    * */
+    fun checkProductosConStock(): List<Producto>?{
+        try{
+        if(con != null){
+            val ps: PreparedStatement = con!!.prepareStatement(sentenciasSQLapp.selectAllProducts)
+            val rs: ResultSet = ps.executeQuery()
+            var listaProductos: MutableList<Producto> = mutableListOf()
+
+            while(rs.next()){
+                rs.getString(1)
+                rs.getString(2)
+                rs.getInt(3)
+                rs.getInt(4)
+                rs.getString(5)
+                listaProductos.add(Producto(rs.getString(1),rs.getString(2), rs.getInt(3), rs.getInt(4), rs.getString(5)))
+            }
+            ps.close()
+            rs.close()
+            return listaProductos
+        }
+        else{
+            //Devolvemos null indicando que no hay conexión
+            return null
+        }}
+    catch(e:Exception){
+        return mutableListOf<Producto>().toList()
+    }}
 }
