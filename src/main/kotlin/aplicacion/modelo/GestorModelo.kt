@@ -1,5 +1,6 @@
 package aplicacion.modelo
 
+import aplicacion.modelo.clases.Cliente
 import aplicacion.modelo.clases.Producto
 import aplicacion.modelo.sentencias.sentenciasSQLapp
 import java.sql.*
@@ -38,79 +39,97 @@ class GestorModelo {
         println("[Desconexión de la base de datos]")
     }
 
-    fun selectAll() {
+
+
+    fun selectCliente(dni: String): Cliente? {
+        var cliente: Cliente? = null
+
+        val ps = con!!.prepareStatement(sentenciasSQLapp.selectClientBy)
+        ps.setString(1, dni)
+        val rs = ps.executeQuery()
+        while (rs.next()) {
+            val dni = rs.getString(1)
+            val nombre = rs.getString(2)
+            val tlf = rs.getString(3)
+            val dir = rs.getString(4)
+            cliente = Cliente(dni, nombre, tlf, dir)
+        }
+        ps.close()
+        rs.close()
+        return cliente
+    }
+
+    fun update(id: String, stock: Int) {
         if (con != null) {
-            val st = con!!.createStatement()
-            val rs = st.executeQuery("select * from productos;")
-            val rsmtd = rs.metaData
-            while (rs.next()) {
-                for (i in 1..rsmtd.columnCount) {
-                    print(rsmtd.getColumnName(i)+": "+rs.getString(i)+" | ")
-                }
-                println("")
-            }
+            val ps = con!!.prepareStatement(sentenciasSQLapp.updateProducts)
+            ps.setInt(1, stock)
+            ps.setString(2,id)
+            ps.executeQuery()
+            ps.close()
         }
     }
 
-    fun select(name: String) {
+    fun deleteProductos(id: String) {
         if (con != null) {
-            val st = con!!.createStatement()
-            val rs = st.executeQuery("select * from productos where nombre = '$name'")
-            val rsmtd = rs.metaData
-            while (rs.next()) {
-                for (i in 1..rsmtd.columnCount) {
-                    println(rs.getString(i))
-                }
-            }
-        }
-    }
-    fun update(id: Int, precio: Int){
-        if(con!= null){
-            val st = con!!.createStatement()
-            val rs = st.executeUpdate("update productos set precio = $precio where id = $id")
+            val ps = con!!.prepareStatement(sentenciasSQLapp.deleteProducts)
+            ps.setString(1, id)
+            ps.executeUpdate()
+            ps.close()
         }
     }
 
-    fun delete(id:Int){
-        if (con!= null){
-            val st = con!!.createStatement()
-            val rs = st.executeUpdate("delete from productos where id = $id")
+    fun insertProducto(id: String, nombre: String, precio: Int, cantidad: Int, descr: String) {
+        if (con != null) {
+            val ps = con!!.prepareStatement(sentenciasSQLapp.insertProducts)
+            ps.setString(1, id)
+            ps.setString(2,nombre)
+            ps.setInt(3,precio)
+            ps.setInt(4,cantidad)
+            ps.setString(5,descr)
+            ps.executeQuery()
+            ps.close()
         }
     }
 
-    fun insert(id: Int,nombre:String,precio: Int){
-        if (con!= null){
-            val st = con!!.createStatement()
-            val rs = st.executeUpdate("insert into productos values ($id,'$nombre',$precio)")
-        }
-    }
     /*
     * Función que muestra los productos en stock
     * */
-    fun checkProductosConStock(): List<Producto>?{
-        try{
-        if(con != null){
-            val ps: PreparedStatement = con!!.prepareStatement(sentenciasSQLapp.selectAllProducts)
-            val rs: ResultSet = ps.executeQuery()
-            var listaProductos: MutableList<Producto> = mutableListOf()
+    fun checkProductosConStock(): List<Producto>? {
+        try {
+            if (con != null) {
+                val ps: PreparedStatement = con!!.prepareStatement(sentenciasSQLapp.selectAllProducts)
+                val rs: ResultSet = ps.executeQuery()
+                var listaProductos: MutableList<Producto> = mutableListOf()
 
-            while(rs.next()){
-                val id = rs.getString(1)
-                val nombre = rs.getString(2)
-                val precio = rs.getInt(3)
-                val cantidad = rs.getInt(4)
-                val descr = rs.getString(5)
-                listaProductos.add(Producto(id,nombre, precio, cantidad, descr))
+                while (rs.next()) {
+                    val id = rs.getString(1)
+                    val nombre = rs.getString(2)
+                    val precio = rs.getInt(3)
+                    val cantidad = rs.getInt(4)
+                    val descr = rs.getString(5)
+                    listaProductos.add(Producto(id, nombre, precio, cantidad, descr))
+                }
+                ps.close()
+                rs.close()
+                return listaProductos
+            } else {
+                //Devolvemos null indicando que no hay conexión
+                return null
             }
-            ps.close()
-            rs.close()
-            return listaProductos
+        } catch (e: Exception) {
+            return mutableListOf<Producto>().toList()
         }
-        else{
-            //Devolvemos null indicando que no hay conexión
-            return null
-        }}
-    catch(e:Exception){
-        return mutableListOf<Producto>().toList()
-    }}
+    }
+
+    fun insertCliente(dni: String, nombre: String, tlf: String, dir: String) {
+        if (con != null) {
+            val ps = con!!.prepareStatement(sentenciasSQLapp.insertClient)
+            ps.setString(1, dni)
+            ps.setString(2,nombre)
+            ps.setString(3,tlf)
+            ps.setString(4,dir)
+            ps.executeQuery()
+            ps.close()
+        }
+    }
 }
