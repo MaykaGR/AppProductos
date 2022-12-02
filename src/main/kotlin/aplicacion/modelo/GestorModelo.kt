@@ -132,4 +132,22 @@ class GestorModelo {
             ps.close()
         }
     }
+
+    fun crearPedido(cliente: Cliente, listaP: List<Producto>){
+        con!!.autoCommit = false
+        var savePoint: Savepoint? = null
+        val ps = con!!.prepareStatement(sentenciasSQLapp.insertPedido)
+        for(i in 0..listaP.size-1){
+            try{
+                ps.setString(1,cliente.dni)
+                ps.setString(2,listaP[i].id)
+                ps.executeUpdate()
+                savePoint = con!!.setSavepoint("enProductos")
+            } catch(e: Exception){
+                con!!.rollback(savePoint)
+            }
+        }
+        con!!.commit()
+        ps.close()
+    }
 }

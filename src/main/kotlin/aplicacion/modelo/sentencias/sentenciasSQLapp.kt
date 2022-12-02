@@ -9,5 +9,5 @@ object sentenciasSQLapp {
     val selectProductsBy: String = "Select * from productos where ? = ?;"
     val selectClientBy: String = "Select * from clientes where dni = ?;"
     val updateProducts: String = "Update productos set cantidad = ? where id = ?;"
-
+    val insertPedido: String = "Insert into pedidos values(?,?);"
 }
