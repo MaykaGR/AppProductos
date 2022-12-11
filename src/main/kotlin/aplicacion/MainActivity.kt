@@ -8,6 +8,8 @@ fun main(){
     val controlador: AppController = AppController(vista)
 
     when(controlador.onStart()){
+        3 -> controlador.onDarDeBaja()
+        2 -> controlador.onHacerPedido()
         1 -> controlador.onAllProducts()
         0 -> controlador.onExit()
     }

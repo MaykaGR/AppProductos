@@ -3,6 +3,7 @@ package aplicacion.controlador
 import aplicacion.modelo.GestorModelo
 import aplicacion.modelo.clases.Producto
 import aplicacion.vista.AppVista
+import java.util.*
 
 class AppController(val vista: AppVista) {
 
@@ -26,10 +27,35 @@ class AppController(val vista: AppVista) {
     fun onStart(): Int {
         return vista.mainMenu()
     }
-
+    fun onHacerPedido(){
+        val dni = vista.login()
+        val gestor = GestorModelo.getInstance()
+        gestor.conexion()
+        val cliente = gestor.selectCliente(dni)
+        if(cliente!= null){
+            gestor.crearPedido(cliente,vista.hacerPedido(cliente))
+        }
+        else{
+            val respuesta = vista.noRegistrado().uppercase(Locale.getDefault())
+            if(respuesta=="S"){
+                val cliente = vista.registrar()
+                gestor.insertCliente(cliente)
+            }
+            else{
+                onHacerPedido()
+            }
+        }
+    }
     fun onExit() {
         val gestor: GestorModelo = GestorModelo.getInstance()
         gestor.desconexion()
         vista.salir()
+    }
+
+    fun onDarDeBaja(){
+        val gestor: GestorModelo = GestorModelo.getInstance()
+        gestor.conexion()
+        val dni = vista.baja()
+        gestor.deleteCliente(dni)
     }
 }
