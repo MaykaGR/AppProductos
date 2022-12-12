@@ -219,4 +219,12 @@ class GestorModelo {
         con!!.commit()
         ps.close()
     }
+
+    fun crearTabla(nombre: String, valores: String){
+        if(con!=null) {
+            val ps = con!!.prepareStatement(sentenciasSQLapp.crearTabla + nombre + valores + ";")
+            ps.executeUpdate()
+            ps.close()
+        }
+    }
 }

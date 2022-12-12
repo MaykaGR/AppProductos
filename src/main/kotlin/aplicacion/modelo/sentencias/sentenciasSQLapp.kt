@@ -12,4 +12,5 @@ object sentenciasSQLapp {
     val selectClientBy: String = "Select * from clientes where dni = ?;"
     val updateProducts: String = "Update productos set cantidad = ? where id = ?;"
     val insertPedido: String = "Insert into pedidos values(?,?, SYSDATE);"
+    val crearTabla: String = "Create table"
 }
