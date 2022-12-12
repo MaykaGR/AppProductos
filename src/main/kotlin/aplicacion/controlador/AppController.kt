@@ -33,7 +33,7 @@ class AppController(val vista: AppVista) {
         gestor.conexion()
         val cliente = gestor.selectCliente(dni)
         if(cliente!= null){
-            gestor.crearPedido(cliente,vista.hacerPedido(cliente))
+            gestor.crearPedido(cliente,vista.hacerPedido())
         }
         else{
             val respuesta = vista.noRegistrado().uppercase(Locale.getDefault())

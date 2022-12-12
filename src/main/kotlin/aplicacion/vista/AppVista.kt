@@ -43,7 +43,7 @@ class AppVista {
         return respuesta
     }
 
-    fun hacerPedido(cliente: Cliente): MutableList<String> {
+    fun hacerPedido(): MutableList<String> {
         var lista: MutableList<String> = mutableListOf()
         var salir = false
         println("Pulsa intro para introducir cada id de producto que desees, y S cuando desees terminar: ")
