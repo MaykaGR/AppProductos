@@ -19,6 +19,7 @@ class AppVista {
         println("Descripcion: ${producto.descr}")
         println("Precio: ${producto.precio}")
         println("Cantidad: ${producto.cantidad}")
+        println("********************")
     }
 
     fun errorGeneral() {
@@ -75,7 +76,7 @@ class AppVista {
         println("Bienvenid@, elige un opción")
         println("1. Mostar productos con stock")
         println(
-            "2. Hacer un pedido (es necesario introducir los productos por su id, para pedir más de una unidad" +
+            "2. Hacer un pedido (es necesario introducir los productos por su id, para pedir más de una unidad " +
                     "de un mismo producto debe introducir de nuevo el id tantas veces como unidades quiera.)"
         )
         println("3. Dar de baja un cliente")
