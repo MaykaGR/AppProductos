@@ -4,6 +4,9 @@ import aplicacion.modelo.clases.Cliente
 import aplicacion.modelo.clases.Producto
 import aplicacion.modelo.sentencias.sentenciasSQLapp
 import java.sql.*
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+
 
 class GestorModelo {
 
@@ -28,11 +31,13 @@ class GestorModelo {
 
     //Crea la conexión
     fun conexion() {
-        if (con == null) {
-            Class.forName("com.mysql.cj.jdbc.Driver")
-            con = DriverManager.getConnection(url + bd, user, pass)
-            println("[Conexión realizada]")
-        } else {
+        try {
+            if (con == null) {
+                Class.forName("com.mysql.cj.jdbc.Driver")
+                con = DriverManager.getConnection(url + bd, user, pass)
+                println("[Conexión realizada]")
+            }
+        } catch (e: Exception) {
             println("[Conexión no realizada]")
         }
     }
@@ -68,8 +73,8 @@ class GestorModelo {
         if (con != null) {
             val ps = con!!.prepareStatement(sentenciasSQLapp.updateProducts)
             ps.setInt(1, stock)
-            ps.setString(2,id)
-            ps.executeQuery()
+            ps.setString(2, id)
+            ps.executeUpdate()
             ps.close()
         }
     }
@@ -85,10 +90,10 @@ class GestorModelo {
     }
 
     //Para borrar, o dar de baja, un cliente
-    fun deleteCliente(dni: String){
-        if(con != null){
+    fun deleteCliente(dni: String) {
+        if (con != null) {
             val ps = con!!.prepareStatement(sentenciasSQLapp.deleteClient)
-            ps.setString(1,dni)
+            ps.setString(1, dni)
             ps.executeUpdate()
             ps.close()
         }
@@ -99,10 +104,10 @@ class GestorModelo {
         if (con != null) {
             val ps = con!!.prepareStatement(sentenciasSQLapp.insertProducts)
             ps.setString(1, id)
-            ps.setString(2,nombre)
-            ps.setInt(3,precio)
-            ps.setInt(4,cantidad)
-            ps.setString(5,descr)
+            ps.setString(2, nombre)
+            ps.setInt(3, precio)
+            ps.setInt(4, cantidad)
+            ps.setString(5, descr)
             ps.executeUpdate()
             ps.close()
         }
@@ -151,78 +156,58 @@ class GestorModelo {
         }
     }
 
-    //Función interna que comprueba el stock de un producto, para poder actualizar al nuevo stock cuando
-    //se realiza un pedido
-    private fun comprobarStock(id: String): Int?{
-        var cantidad: Int? = null
-        try {
-            if (con != null) {
-                val ps: PreparedStatement = con!!.prepareStatement(sentenciasSQLapp.selectStock)
-                ps.setString(1,id)
-                val rs: ResultSet = ps.executeQuery()
-                while (rs.next()) {
-                    cantidad = rs.getInt(1)
-                }
-                ps.close()
-                rs.close()
-
-            } else {
-                //Devolvemos null indicando que no hay conexión
-                return null
-            }
-        } catch (e: Exception) {
-            return null
-        }
-        return cantidad
-    }
 
     //Busca un producto usando su id
-    private fun selectProductoByID(id: String): Producto?{
+    private fun selectProductoByID(id: String): Producto? {
         var producto: Producto? = null
-        if(con != null){
+        if (con != null) {
             val ps: PreparedStatement = con!!.prepareStatement(sentenciasSQLapp.selectProductsBy)
-            ps.setString(1,id)
+            ps.setString(1, id)
             val rs: ResultSet = ps.executeQuery()
-            while (rs.next()){
+            while (rs.next()) {
                 val id = rs.getString(1)
                 val nombre = rs.getString(2)
                 val precio = rs.getInt(3)
                 val cantidad = rs.getInt(4)
                 val descr = rs.getString(5)
-                producto = Producto(id,nombre,precio,cantidad,descr)
+                producto = Producto(id, nombre, precio, cantidad, descr)
             }
         }
         return producto
     }
 
     //Función para crear un pedido, que recibe un cliente y la lista de ids de los pedidos que desea
-    fun crearPedido(cliente: Cliente, listaP: MutableList<String>){
-        con!!.autoCommit = false
-        var savePoint: Savepoint? = null
-        val ps = con!!.prepareStatement(sentenciasSQLapp.insertPedido)
-        for(i in 0..listaP.size-1){
-            try{
-                //Se busca cada producto por su id
-                val producto = selectProductoByID(listaP[i])
-                ps.setString(1,cliente.dni)
-                ps.setString(2,producto?.id)
-                ps.executeUpdate()
-                //Una vez realizado el pedido, se resta esa unidad del stock del producto
-                val stock = comprobarStock(producto!!.id)
-                update(producto.id, ((stock?:1)-1))
-                //Establece un savepoint por si en algún momento hay un error introduciendo un pedido
-                savePoint = con!!.setSavepoint("enProductos")
-            } catch(e: Exception){
-                con!!.rollback(savePoint)
+    fun crearPedido(cliente: Cliente, listaP: MutableList<String>) {
+        if (con != null) {
+            con!!.autoCommit = false
+            var savePoint: Savepoint = con!!.setSavepoint("pre-pedido")
+            //val fecha = LocalDateTime.now().format(DateTimeFormatter.ofPattern("MM.dd.yyy")).toString()
+            val ps = con!!.prepareStatement(sentenciasSQLapp.insertPedido)
+            for (i in 0..listaP.size - 1) {
+                try {
+                    //Se busca cada producto por su id
+                    val producto = selectProductoByID(listaP[i])
+                    ps.setString(1, cliente.dni)
+                    ps.setString(2, producto?.id)
+                    //ps.setString(3,fecha)
+                    ps.executeUpdate()
+                    //Una vez realizado el pedido, se resta esa unidad del stock del producto
+                    update(producto!!.id, (producto?.cantidad ?: 1) - 1)
+                    //Establece un savepoint por si en algún momento hay un error introduciendo un pedido
+                    savePoint = con!!.setSavepoint("enProductos")
+                } catch (e: Exception) {
+                    println(e)
+                    con!!.rollback(savePoint)
+                }
             }
+            con!!.commit()
+            ps.close()
         }
-        con!!.commit()
-        ps.close()
     }
 
-    fun crearTabla(nombre: String, valores: String){
-        if(con!=null) {
-            val ps = con!!.prepareStatement(sentenciasSQLapp.crearTabla +" "+ nombre + valores + ";")
+    fun crearTabla(nombre: String, valores: String) {
+        if (con != null) {
+            val ps = con!!.prepareStatement(sentenciasSQLapp.crearTabla + " " + nombre + valores + ";")
             ps.executeUpdate()
             ps.close()
         }

@@ -9,7 +9,7 @@ class AppController(val vista: AppVista) {
 
     fun onAllProducts(){
         val gestor: GestorModelo = GestorModelo.getInstance()
-        gestor.conexion()
+        //gestor.conexion()
         val listaProductos: List<Producto>? = gestor.checkProductosConStock()
         if(listaProductos == null){
             vista.baseDeDatosCaída()
@@ -25,6 +25,8 @@ class AppController(val vista: AppVista) {
     }
 
     fun onStart(): Int {
+        val gestor: GestorModelo = GestorModelo.getInstance()
+        gestor.conexion()
         return vista.mainMenu()
     }
     fun onHacerPedido(){
@@ -54,7 +56,7 @@ class AppController(val vista: AppVista) {
 
     fun onDarDeBaja(){
         val gestor: GestorModelo = GestorModelo.getInstance()
-        gestor.conexion()
+        //gestor.conexion()
         val dni = vista.baja()
         gestor.deleteCliente(dni)
     }

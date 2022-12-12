@@ -8,9 +8,9 @@ object sentenciasSQLapp {
     val insertProducts: String = "Insert into productos values(?,?,?,?,?);"
     val insertClient: String = "Insert into clientes values(?,?,?,?);"
     val selectProductsBy: String = "Select * from productos where id = ?;"
-    val selectStock: String = "Select stock from productos where id = ?;"
+    val selectStock: String = "Select cantidad from productos where id = ?;"
     val selectClientBy: String = "Select * from clientes where dni = ?;"
     val updateProducts: String = "Update productos set cantidad = ? where id = ?;"
-    val insertPedido: String = "Insert into pedidos values(?,?, SYSDATE);"
+    val insertPedido: String = "Insert into pedidos values(?,?);"
     val crearTabla: String = "Create table"
 }

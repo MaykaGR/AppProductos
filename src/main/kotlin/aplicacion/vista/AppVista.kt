@@ -48,15 +48,13 @@ class AppVista {
         var lista: MutableList<String> = mutableListOf()
         var salir = false
         println("Pulsa intro para introducir cada id de producto que desees, y S cuando desees terminar: ")
-        var accion = readln()
-        if (accion !="S\n") {
-            while (!salir) {
-                if (readln().toUpperCase() != "S") {
-                    val id = readln()
-                    lista.add(id)
-                } else salir = true
-            }
-        } else salir = true
+        var respuesta = readln()
+        while(!salir) {
+            if (respuesta != "S") {
+                lista.add(respuesta)
+                respuesta = readln()
+            } else salir = true
+        }
         return lista
     }
 
