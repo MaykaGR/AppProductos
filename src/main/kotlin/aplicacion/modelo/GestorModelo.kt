@@ -103,7 +103,7 @@ class GestorModelo {
             ps.setInt(3,precio)
             ps.setInt(4,cantidad)
             ps.setString(5,descr)
-            ps.executeQuery()
+            ps.executeUpdate()
             ps.close()
         }
     }
@@ -146,7 +146,7 @@ class GestorModelo {
             ps.setString(2, cliente.nombre)
             ps.setString(3, cliente.tlf)
             ps.setString(4, cliente.dir)
-            ps.executeQuery()
+            ps.executeUpdate()
             ps.close()
         }
     }
@@ -222,7 +222,7 @@ class GestorModelo {
 
     fun crearTabla(nombre: String, valores: String){
         if(con!=null) {
-            val ps = con!!.prepareStatement(sentenciasSQLapp.crearTabla + nombre + valores + ";")
+            val ps = con!!.prepareStatement(sentenciasSQLapp.crearTabla +" "+ nombre + valores + ";")
             ps.executeUpdate()
             ps.close()
         }

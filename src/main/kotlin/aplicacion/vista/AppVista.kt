@@ -48,7 +48,7 @@ class AppVista {
         var salir = false
         println("Pulsa intro para introducir cada id de producto que desees, y S cuando desees terminar: ")
         var accion = readln()
-        if (accion == "\n") {
+        if (accion !="S\n") {
             while (!salir) {
                 if (readln().toUpperCase() != "S") {
                     val id = readln()
