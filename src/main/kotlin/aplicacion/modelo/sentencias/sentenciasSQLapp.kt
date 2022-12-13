@@ -11,6 +11,6 @@ object sentenciasSQLapp {
     val selectStock: String = "Select cantidad from productos where id = ?;"
     val selectClientBy: String = "Select * from clientes where dni = ?;"
     val updateProducts: String = "Update productos set cantidad = ? where id = ?;"
-    val insertPedido: String = "Insert into pedidos values(?,?);"
+    val insertPedido: String = "Insert into pedidos values(?,?, CURRENT_DATE);"
     val crearTabla: String = "Create table"
 }
